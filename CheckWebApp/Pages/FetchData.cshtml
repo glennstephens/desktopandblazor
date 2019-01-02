@@ -1,0 +1,60 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (viewModel == null || viewModel.forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in viewModel.forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+    public class SimpleDataLoader : IDataLoader
+    {
+        HttpClient _client;
+
+        public SimpleDataLoader(HttpClient client)
+        {
+            _client = client;
+        }
+
+        public Task<WeatherForecast[]> GetForecasts()
+        {
+            return _client.GetJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        }
+    }
+
+    WeatherForecastViewModel viewModel;
+
+    protected override async Task OnInitAsync()
+    {
+        viewModel = new WeatherForecastViewModel(new SimpleDataLoader(Http));
+        await viewModel.LoadInitialData();
+    }
+}

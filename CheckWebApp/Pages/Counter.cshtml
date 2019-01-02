@@ -1,0 +1,11 @@
+﻿@page "/counter"
+
+<h1>Counter</h1>
+
+<p>Current count: @viewModel.ClickedCount</p>
+
+<button class="btn btn-primary" onclick="@viewModel.IncrementCount">Click me</button>
+
+@functions {
+    PageCounterViewModel viewModel = new PageCounterViewModel();
+}
